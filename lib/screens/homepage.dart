@@ -2,6 +2,7 @@
 
 import 'package:calculator_app/utils/buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,12 +14,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var userQuestion = "";
   var userAnswer = "";
+  var ansPressed;
+  
   final List<String> button = [
     'C','Del','%','/',
-    '7','8','9', 'X',
+    '7','8','9', 'x',
     '4', '5', '6', '-',
     '1', '2','3','+',
-     '0','0','.','=',
+     '0','.','ANS','=',
   ];
   @override
   Widget build(BuildContext context) {
@@ -44,12 +47,12 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         padding: const EdgeInsets.all(25),
                         alignment: Alignment.centerLeft,
-                        child: Text(userQuestion),
+                        child: Text(userQuestion , style:const  TextStyle(fontSize: 30),),
                       ),
                       Container(
                         padding: const EdgeInsets.all(25),
                         alignment: Alignment.bottomRight,
-                        child: Text(userAnswer),
+                        child: Text(userAnswer , style:const  TextStyle(fontSize: 30),),
                       ),
                     ],
                   ),
@@ -74,6 +77,7 @@ class _HomePageState extends State<HomePage> {
                             setState(
                               () {
                                 userQuestion = '';
+                                userAnswer='';
                               },
                             );
                           },
@@ -81,18 +85,31 @@ class _HomePageState extends State<HomePage> {
                           textColor: Colors.blue,
                           buttonText: button[index],
                         );
-                      } else if (index == 1) {
+                      }  else if (index == 1) {
                         return CalButtons(
                           buttonTapped: () {
                             setState(
                               () {
-                                userQuestion = userQuestion.substring(
-                                    0, userQuestion.length - 1);
+                                userQuestion= userQuestion.substring(0, userQuestion.length-1);
                               },
                             );
                           },
                           color: Colors.black,
                           textColor: Colors.blue,
+                          buttonText: button[index],
+                        );
+                      }
+                       else if (index == button.length-1) {
+                        return CalButtons(
+                          buttonTapped: () {
+                            setState(
+                              () {
+                                equalPressed();
+                              },
+                            );
+                          },
+                          color: const Color.fromARGB(255, 119, 136, 238),
+                          textColor: Colors.black,
                           buttonText: button[index],
                         );
                       } else {
@@ -124,10 +141,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  bool isOperator(String x) {
-    if (x == '%' || x == '/' || x == 'X' || x == '-' || x == '+' || x == '=') {
+  bool isOperator(String x) { 
+    if (x == '%' || x == '/' || x == 'x' || x == '-' || x == '+' || x == '=') {
       return true;
     }
     return false;
   }
+   void equalPressed(){
+    String finalQuestion = userQuestion;
+    finalQuestion= finalQuestion.replaceAll("x", "*");
+
+     Parser p = Parser();
+     Expression exp = p.parse(finalQuestion);
+     ContextModel cm = ContextModel();
+     double eval = exp.evaluate(EvaluationType.REAL, cm);
+
+     userAnswer=eval.toString();
+   }
 }

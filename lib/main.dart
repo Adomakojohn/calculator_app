@@ -1,7 +1,5 @@
 import 'package:calculator_app/screens/homepage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 
 void main(){
